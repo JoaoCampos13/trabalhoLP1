@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ABB.hpp"
+#include "arvoreBusca.hpp"
 
 using namespace std;
 
@@ -50,16 +50,16 @@ void ArvoreBinariaBusca::preOrdemRecursivo(No* no){
         return;
     }
     cout<< no->dado << " ";
-    emOrdemRecursivo(no->esquerdo);
-    emOrdemRecursivo(no->direito);
+    preOrdemRecursivo(no->esquerdo);
+    preOrdemRecursivo(no->direito);
 }
 
 void ArvoreBinariaBusca::ArvoreBinariaBusca:: posOrdemRecursivo(No* no){
     if(no == nullptr){
         return;
     }
-    emOrdemRecursivo(no->esquerdo);
-    emOrdemRecursivo(no->direito);
+    posOrdemRecursivo(no->esquerdo);
+    posOrdemRecursivo(no->direito);
     cout<< no->dado << " ";
 }
 
