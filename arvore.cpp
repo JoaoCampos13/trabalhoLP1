@@ -1,5 +1,5 @@
 #include <iostream>
-#include "arvoreBusca.hpp"
+#include "arvore.hpp"
 
 using namespace std;
 
