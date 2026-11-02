@@ -1,8 +1,13 @@
-#ifndef ARVORE_BUSCA_HPP
-#define ARVORE_BUSCA_HPP
+#ifndef ARVORE_HPP
+#define ARVORE_HPP
 
-#include "no.hpp"
 #include <iostream>
+struct No{
+    int dado;
+    No* esquerdo;
+    No* direito;
+    No (int valor) : dado(valor), esquerdo(nullptr), direito(nullptr) {}
+};
 
 class ArvoreBinariaBusca
 {
