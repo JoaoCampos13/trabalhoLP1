@@ -20,18 +20,20 @@ No* ArvoreBinariaBusca::inserirRecursivo(No* no, int valor){
     return no;
 }
 
-No* ArvoreBinariaBusca::buscarRecursivo(No* no, int valor){
-    if (no->dado == valor){
-        return no;
+bool ArvoreBinariaBusca::buscarRecursivo(No* no, int valor) {
+    if (no == nullptr) {
+        return false;
     }
 
-    if (no->dado < valor){
+    if (no->dado == valor) {
+        return true;
+    }
+
+    if (valor < no->dado) {
         return buscarRecursivo(no->esquerdo, valor);
-    }else if (no->dado > valor){
+    } else {
         return buscarRecursivo(no->direito, valor);
     }
-
-    return nullptr;
 }
 
 void ArvoreBinariaBusca::emOrdemRecursivo(No* no){
@@ -80,12 +82,8 @@ void ArvoreBinariaBusca::inserir(int valor){
     raiz = inserirRecursivo(raiz, valor);
 }
 
-bool* ArvoreBinariaBusca::buscar(int valor){
-    if(buscarRecursivo (raiz, valor) != nullptr){
-        return true;
-    }else{
-        return false;
-    }
+bool ArvoreBinariaBusca::buscar(int valor) {
+    return buscarRecursivo(raiz, valor);
 }
 
 void ArvoreBinariaBusca::imprimirEmOrdem(){
