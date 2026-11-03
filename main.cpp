@@ -2,7 +2,7 @@
 #include <string>
 #include <list>//biblioteca da lista
 #include <queue>//biblioteca da fila
-#include "arvore.cpp"//incluir arquivo da arvore binária
+#include "arvore.hpp"//incluir arquivo da arvore binária
 #include "atletas.hpp"//incluir arquivo com a struct Atleta
 #include "ordenacao.hpp"//incluir arquivo de ordenação
 #include <cstdlib>//para poder usar o rand() para sortear a pontuação dos atletas.
@@ -21,22 +21,24 @@ int main(){
     srand(time(0));
 
     Atleta* atletas = nullptr;//inicializar o vetor de atletas com nullptr;
-    int opcao; //opcao do menu.  
-    int qtd = 0;//caso na opcao 1 para saber quantos atletas farão registro.
-    int tamanho = 0;//funciona junto com o qtd. É a quantidade verdadeira de atletas. 
+    int opcao; //opcao do menu. 
+    int tamanho = 0;//saber quantos atletas farão registro.
     
     queue<Atleta> filaEspera;//Cria uma fila com os atletas registrados.
     list<Atleta> listaAtletas;//Cria uma lista dupla com os atletas registrados. 
 
     //Menu.
     do{
-        cout<<"\n====Gerenciamento do Torneio====\n"<<endl;
+        cout<<"\n=============================================="<<endl;
+        cout<<"           Gerenciamento do Torneio";
+        cout<<"\n=============================================="<<endl;
         cout<<"1. Registrar atletas."<<endl;//registro inicial de 50,500 ou 5.000 atletas.
         cout<<"2. Realizar prova do primeiro atleta na fila."<<endl;//realizar prova usando fila.
         cout<<"3. Inserir um atleta na lista."<<endl;//inserir usando lista dupla.
         cout<<"4. Remover um atleta na lista."<<endl;//Remover usando lista dupla.
         cout<<"5. Navegar na lista (proximo, anterior)."<<endl;//navegar usando lista dupla.
-        cout<<"Digite 0 para sair."<<endl;//opcao de saída.
+        cout<<"0. Encerrar programa."<<endl;//opcao de saída.
+        cout<<"=============================================="<<endl;
         cin>>opcao;
 
 
@@ -44,10 +46,10 @@ int main(){
             case 0: break;
 
             case 1: {//registrar atletas.
-                cout<<"Digite 1, 2, ou 3 para registrar 50, 500 ou 5.000 atletas respectivamente."<<endl;
-                cin>>qtd;
+                cout<<"Quantos atletas quer registrar? 50, 500 ou 5.000"<<endl;
+                cin>> tamanho;
 
-                if(qtd != 1 && qtd != 2 && qtd != 3){//ver se é um dos valores aceitos.
+                if(tamanho != 50 && tamanho != 500 && tamanho != 5000){//ver se é um dos valores aceitos.
                     cout<<"Quantidade invalida."<<endl;
                     break;
                 }
@@ -55,9 +57,6 @@ int main(){
                     delete[] atletas;//caso já exista um vetor alocado.
                 }
 
-                if(qtd == 1){tamanho = 50;}//se o usuário digitou 1, gera 50 registros
-                if(qtd == 2){tamanho = 500;}//se o usuário digitou 2, gera 500 registros
-                if(qtd == 3){tamanho = 5000;}//se o usuário digitou 3, gera 5.000 registros
                     
                 atletas = new Atleta[tamanho];//Alocar vetor dessa quantidade de atletas.
                 carregarRegistros(atletas, tamanho);//carregar o registro.

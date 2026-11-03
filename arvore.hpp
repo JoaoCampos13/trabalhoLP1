@@ -9,8 +9,7 @@ struct No{
     No (int valor) : dado(valor), esquerdo(nullptr), direito(nullptr) {}
 };
 
-class ArvoreBinariaBusca
-{
+class ArvoreBinariaBusca{
 private:
     No* raiz;         // mesma ideia da classe anterior
     std::size_t tamanho;   // quantidade de nós guardados

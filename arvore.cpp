@@ -54,7 +54,7 @@ void ArvoreBinariaBusca::preOrdemRecursivo(No* no){
     preOrdemRecursivo(no->direito);
 }
 
-void ArvoreBinariaBusca::ArvoreBinariaBusca:: posOrdemRecursivo(No* no){
+void ArvoreBinariaBusca::posOrdemRecursivo(No* no){
     if(no == nullptr){
         return;
     }
