@@ -89,38 +89,40 @@ int buscaBinaria(const Atleta v[], int n, int pontuacaoAtleta, long long& acesso
     return -1;  // inicio passou de fim
 }
 
-void QuickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas){
+int particiona(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas) {
+    int pivo_pontuacao = v[fim].pontuacao;        // o último é o pivô
+    int i = inicio - 1;       // Fim da região dos atletas com MAIOR pontuação
+    for (int j = inicio; j < fim; j++) {
+        comparacoes++;
 
-    if(inicio < fim){
-        int pivo_pontuacao = v[fim].pontuacao;
-        int i = inicio -1;
-
-        // Laço de varredura para mover quem tem mais pontos para a esquerda [3]
-        for(int j = inicio; j < fim; j++){
-            comparacoes++;
-            if(v[j].pontuacao > pivo_pontuacao){
-                i++;
-                troca(v[i], v[j]);
-                trocas++;
-                }
-            }
-            // Posiciona o pivô no lugar correto APÓS o laço j
-            troca(v[i + 1], v[fim]);
+        if (v[j].pontuacao > pivo_pontuacao) {   // Entra na região das maiores pontuações (decrescente)
+            i++;
+            troca(v[i], v[j]);
             trocas++;
-            int pivo_indice = i + 1; // Guarda o ÍNDICE do pivô
-            
-            // Chamadas recursivas para a esquerda e direita [2]
-            QuickSort(v, inicio, pivo_indice - 1, comparacoes, trocas); 
-            QuickSort(v, pivo_indice + 1, fim, comparacoes, trocas);
         }
     }
+    troca(v[i + 1], v[fim]);  // pivô no lugar certo
+    trocas++;
+    return i + 1;             // posição final do pivô
+}
+
+
+void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas){
+
+        if (inicio < fim) {  // trecho com 2 ou mais elementos
+        int pos_pivo = particiona(v, inicio, fim, comparacoes, trocas);
+        quickSort(v, inicio, pos_pivo - 1, comparacoes, trocas);  // esquerda
+        quickSort(v, pos_pivo + 1, fim, comparacoes, trocas);     // direita
+    }
+}
+
   
 
 // Ordena v em ordem decrescente pelo método da Inserção (Insertion Sort)
-void insertSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar) {
+void insertionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar) {
     for (int i = 1; i < n; i++) {
-        Atleta chave = v[i];
-        int j = i - 1;
+        Atleta chave = v[i];  // O atleta da vez
+        int j = i - 1;   // último da parte já ordenada
         
         // Desloca os elementos menores que a chave para a direita
         while (j >= 0) {
@@ -142,7 +144,7 @@ void insertSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bo
     }
 }
 
-void executarModoDeTeste() {
+void executarModoTeste() {
     // Tamanhos de vetores definidos pelas especificações do trabalho (50, 500 e 5000)
     int tamanhos[] = {50, 500, 5000};
     
@@ -171,7 +173,7 @@ void executarModoDeTeste() {
         // --- TESTE 1: QUICKSORT ---
         long long compQ = 0, trocasQ = 0;
         copiarVetorAtletas(original, copia, n);
-        QuickSort(copia, 0, n - 1, compQ, trocasQ);
+        quickSort(copia, 0, n - 1, compQ, trocasQ);
         
         // --- TESTE 2: SELECTION SORT ---
         long long compS = 0, trocasS = 0;
@@ -181,7 +183,7 @@ void executarModoDeTeste() {
         // --- TESTE 3: INSERTION SORT ---
         long long compI = 0, trocasI = 0;
         copiarVetorAtletas(original, copia, n);
-        insertSort(copia, n, compI, trocasI, false);
+        insertionSort(copia, n, compI, trocasI, false);
         
         // Exibição formatada das métricas de Ordenação
         cout << left << setw(18) << "Algoritmo" << setw(22) << "Comparacoes" << setw(22) << "Trocas/Deslocamentos" << "\n";

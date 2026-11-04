@@ -1,7 +1,6 @@
 #ifndef ORDENACAO_PESQUISA_HPP
 #define ORDENACAO_PESQUISA_HPP
 #include <string>
-#include <vector>
 using namespace std;
 
 // Struct que representa o registro do atleta no torneio
@@ -14,8 +13,8 @@ struct Atleta
 };
 
 //Uso do long long& e para evitaro estouro de Memória (Integer Overflow)
-void QuickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas);
-int parcionar();
+void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas);
+int particiona(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas);
 
 //função auxiliar de troca, cópia de atletas e imprimir atletas
 void troca(Atleta& a, Atleta& b);
@@ -23,7 +22,7 @@ void copiarVetorAtletas(const Atleta origem[], Atleta destino[], int n);
 
 void imprimeVetorAtletas_Pont(Atleta v[], int n);
 void selectionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar); 
-void insertSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar);
+void insertionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar);
 
 // funções de buscas
 int buscaSequencial(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos);
