@@ -4,6 +4,21 @@
 using namespace std;
 
 //Recursivas:
+void ArvoreBinariaBusca::destruirRecursivo(No* no){
+    if(no == nullptr){
+        return;
+    }
+
+    destruirRecursivo(no->esquerdo);
+    destruirRecursivo(no->direito);
+
+    delete no;
+    return;
+}
+
+int ArvoreBinariaBusca::auturaRecursivo(No* no){
+
+}
 
 No* ArvoreBinariaBusca::inserirRecursivo(No* no, int valor){
     if (no == nullptr){
@@ -18,6 +33,26 @@ No* ArvoreBinariaBusca::inserirRecursivo(No* no, int valor){
     }
 
     return no;
+}
+
+bool ArvoreBinariaBusca::removerRecursivo(No* no, int valor){
+    if(no == nullptr){
+        return -1;
+    }
+
+    if(no->esquerdo && no->direito == nullptr){ //significa que se trata de um no folha
+
+        int aux = no->dado;
+        delete no;
+        return aux;
+
+    }else if(no->esquerdo && no->direito != nullptr){ //no com dois filhos
+        
+
+    }else if(no->esquerdo || no->direito != nullptr){ // no com um filho
+
+
+    }
 }
 
 bool ArvoreBinariaBusca::buscarRecursivo(No* no, int valor) {
@@ -70,16 +105,28 @@ ArvoreBinariaBusca::ArvoreBinariaBusca(){
     tamanho = 0;
 }
 
+ArvoreBinariaBusca::~ArvoreBinariaBusca(){
+    destruirRecursivo(raiz);
+}
+
 bool ArvoreBinariaBusca::estaVazia(){
     return tamanho == 0;
 }
 
-std::size_t ArvoreBinariaBusca::getTamanho(){
+std::size_t ArvoreBinariaBusca::getTamanho() const{
     return tamanho;
+}
+
+std::size_t ArvoreBinariaBusca::getAutura() {
+    return auturaRecursivo(raiz);
 }
 
 void ArvoreBinariaBusca::inserir(int valor){
     raiz = inserirRecursivo(raiz, valor);
+}
+
+bool ArvoreBinariaBusca::remover(int valor){
+    return removerRecursivo(raiz, valor);
 }
 
 bool ArvoreBinariaBusca::buscar(int valor) {
