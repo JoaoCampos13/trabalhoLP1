@@ -16,8 +16,19 @@ void ArvoreBinariaBusca::destruirRecursivo(No* no){
     return;
 }
 
-int ArvoreBinariaBusca::auturaRecursivo(No* no){
+int ArvoreBinariaBusca::alturaRecursivo(No* no){
+    if(no == nullptr){
+        return -1;
+    }
 
+    int alturaEsquerda = alturaRecursivo(no->esquerdo);
+    int alturaDireita = alturaRecursivo(no->direito);
+
+    if(alturaEsquerda > alturaDireita){
+        return alturaEsquerda + 1;
+    }else{
+        return alturaDireita + 1;
+    }
 }
 
 No* ArvoreBinariaBusca::inserirRecursivo(No* no, int valor){
@@ -35,24 +46,42 @@ No* ArvoreBinariaBusca::inserirRecursivo(No* no, int valor){
     return no;
 }
 
-bool ArvoreBinariaBusca::removerRecursivo(No* no, int valor){
+No* ArvoreBinariaBusca::removerRecursivo(No* no, int valor){
     if(no == nullptr){
-        return -1;
+        return nullptr;
     }
 
-    if(no->esquerdo && no->direito == nullptr){ //significa que se trata de um no folha
+    if(valor < no->dado){
+        no->esquerdo = removerRecursivo(no->esquerdo, valor);
+    }else if(valor > no->dado){
+        no->direito = removerRecursivo(no->direito, valor);
+    }else{
+        if(no->esquerdo == nullptr && no->direito == nullptr){
+            delete no;
+            tamanho--;
+            return nullptr;
+        }
 
-        int aux = no->dado;
-        delete no;
-        return aux;
+        if(no->esquerdo == nullptr){
+            No* temp = no->direito;
+            delete no;
+            tamanho--;
+            return temp;
+        }
 
-    }else if(no->esquerdo && no->direito != nullptr){ //no com dois filhos
-        
+        if(no->direito == nullptr){
+            No* temp = no->esquerdo;
+            delete no;
+            tamanho--;
+            return temp;
+        }
 
-    }else if(no->esquerdo || no->direito != nullptr){ // no com um filho
-
-
+        No* temp = encontrarMenor(no->direito);
+        no->dado = temp->dado;
+        no->direito = removerRecursivo(no->direito, temp->dado);
     }
+
+    return no;
 }
 
 bool ArvoreBinariaBusca::buscarRecursivo(No* no, int valor) {
@@ -109,6 +138,14 @@ ArvoreBinariaBusca::~ArvoreBinariaBusca(){
     destruirRecursivo(raiz);
 }
 
+No* ArvoreBinariaBusca::encontrarMenor(No* no){
+    while(no->esquerdo != nullptr){
+        no = no->esquerdo;
+    }
+
+    return no;
+}
+
 bool ArvoreBinariaBusca::estaVazia(){
     return tamanho == 0;
 }
@@ -117,8 +154,8 @@ std::size_t ArvoreBinariaBusca::getTamanho() const{
     return tamanho;
 }
 
-std::size_t ArvoreBinariaBusca::getAutura() {
-    return auturaRecursivo(raiz);
+int ArvoreBinariaBusca::getAltura() {
+    return alturaRecursivo(raiz);
 }
 
 void ArvoreBinariaBusca::inserir(int valor){
@@ -126,7 +163,12 @@ void ArvoreBinariaBusca::inserir(int valor){
 }
 
 bool ArvoreBinariaBusca::remover(int valor){
-    return removerRecursivo(raiz, valor);
+    if(!buscar(valor)){
+        return false;
+    }
+
+    raiz = removerRecursivo(raiz, valor);
+    return true;
 }
 
 bool ArvoreBinariaBusca::buscar(int valor) {
