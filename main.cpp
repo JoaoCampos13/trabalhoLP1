@@ -4,7 +4,7 @@
 #include <queue>//biblioteca da fila
 #include "arvore.hpp"//incluir arquivo da arvore binária
 #include "atletas.hpp"//incluir arquivo com a struct Atleta
-#include "ordenacao.hpp"//incluir arquivo de ordenação
+#include "ordenacao_pesquisa.hpp"//incluir arquivo de ordenação
 #include <cstdlib>//para poder usar o rand() para sortear a pontuação dos atletas.
 #include <ctime>//para poder usar o rand() para sortear a pontuação dos atletas.
 using namespace std;
