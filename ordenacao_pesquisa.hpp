@@ -2,26 +2,28 @@
 #define ORDENACAO_PESQUISA_HPP
 
 #include <string>
-#include "atletas.hpp" // <-- Importa a struct oficial do projeto
+#include "atletas.hpp" // Importa a struct oficial de Atleta
+
 using namespace std;
 
-// Funções de ordenação recebem o vetor de Atleta (usando o float pontuacao corretamente)
+// Funções de ordenação utilizando a pontuação do atleta como chave (ordem decrescente)
 void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas);
 int particiona(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas);
 
-// Função auxiliar de troca, cópia de atletas e impressão
+// Funções utilitárias de manipulação de vetores
 void troca(Atleta& a, Atleta& b);
 void copiarVetorAtletas(const Atleta origem[], Atleta destino[], int n);
-
 void imprimeVetorAtletas_Pont(Atleta v[], int n);
+
+// Algoritmos de ordenação adicionais
 void selectionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar); 
 void insertionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar);
 
-// Funções de buscas (ajustadas para buscar por pontuação se necessário, ou ID)
-int buscaSequencial(const Atleta v[], int n, float pontuacaoAtleta, long long& acessos);
-int buscaBinaria(const Atleta v[], int n, float pontuacaoAtleta, long long& acessos);
+// Funções de busca com controle de acessos à memória
+int buscaSequencial(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos);
+int buscaBinaria(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos);
 
-// Função para teste
+// Função para testes automatizados com massas de dados de 50, 500 e 5000 registros
 void executarModoTeste();
 
 #endif

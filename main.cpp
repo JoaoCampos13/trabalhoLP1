@@ -1,227 +1,287 @@
 #include <iostream>
 #include <string>
-#include <list>//biblioteca da lista
-#include <queue>//biblioteca da fila
-#include "arvore.hpp"//incluir arquivo da arvore binária
-#include "atletas.hpp"//incluir arquivo com a struct Atleta
-#include "ordenacao_pesquisa.hpp"//incluir arquivo de ordenação
-#include <cstdlib>//para poder usar o rand() para sortear a pontuação dos atletas.
-#include <ctime>//para poder usar o rand() para sortear a pontuação dos atletas.
+#include <list>
+#include <queue>
+#include "arvore.hpp"
+#include "atletas.hpp"
+#include "ordenacao_pesquisa.hpp"
+#include <cstdlib>
+#include <ctime>
+#include <iomanip>
+
 using namespace std;
 
-void carregarRegistros(Atleta vetor[],int tamanho){//Registra os atletas, 50, 500 ou 5.000.
-    for(int i=0;i<tamanho;i++){
-        vetor[i].id = i + 1;//inicia cada atleta com um id em ordem crescente.
-        vetor[i].nome = "atleta " + to_string(i+1);//serve para inserir um nome na string. Sugestao de IA.
-        vetor[i].pontuacao = 0.0;//inicia a pontuação com 0. 
+// Função para preencher o vetor inicial de atletas
+void carregarRegistros(Atleta vetor[], int tamanho){
+    for(int i = 0; i < tamanho; i++){
+        vetor[i].id = i + 1;
+        vetor[i].nome = "atleta " + to_string(i + 1);
+        vetor[i].pontuacao = 0.0; 
     }
 }
 
 int main(){
     srand(time(0));
 
-    Atleta* atletas = nullptr;//inicializar o vetor de atletas com nullptr;
-    int opcao; //opcao do menu. 
-    int tamanho = 0;//saber quantos atletas farão registro.
+    Atleta* atletas = nullptr;
+    int opcao = 0; 
+    int tamanho = 0;
     
-    queue<Atleta> filaEspera;//Cria uma fila com os atletas registrados.
-    list<Atleta> listaAtletas;//Cria uma lista dupla com os atletas registrados. 
+    queue<Atleta> filaEspera;      // Fila para gerenciar a ordem de largada da prova
+    list<Atleta> listaAtletas;      // Lista duplamente encadeada para manipulação geral
+    ArvoreBinariaBusca arvoreAtletas; // Árvore Binária de Busca organizada por ID
 
-    //Menu.
     do{
-        cout<<"\n=============================================="<<endl;
-        cout<<"           Gerenciamento do Torneio";
-        cout<<"\n=============================================="<<endl;
-        cout<<"1. Registrar atletas."<<endl;//registro inicial de 50,500 ou 5.000 atletas.
-        cout<<"2. Realizar prova do primeiro atleta na fila."<<endl;//realizar prova usando fila.
-        cout<<"3. Inserir um atleta na lista."<<endl;//inserir usando lista dupla.
-        cout<<"4. Remover um atleta na lista."<<endl;//Remover usando lista dupla.
-        cout<<"5. Navegar na lista (proximo, anterior)."<<endl;//navegar usando lista dupla.
-        cout<<"0. Encerrar programa."<<endl;//opcao de saída.
-        cout<<"=============================================="<<endl;
-        cin>>opcao;
-
+        cout << "\n==============================================" << endl;
+        cout << "           Gerenciamento do Torneio";
+        cout << "\n==============================================" << endl;
+        cout << "1. Registrar atletas (50, 500 ou 5.000)." << endl;
+        cout << "2. Realizar prova do primeiro atleta na fila." << endl;
+        cout << "3. Inserir um atleta na lista." << endl;
+        cout << "4. Remover um atleta na lista (Desclassificar)." << endl;
+        cout << "5. Navegar na lista (proximo, anterior)." << endl;
+        cout << "6. Gerenciar ABB (Inserir ID, Buscar, Remover 3 Casos, Listar, Altura)." << endl;
+        cout << "7. Ordenar Atletas por Pontuacao (QuickSort, Selection, Insertion)." << endl;
+        cout << "8. Executar Modo de Teste Automatizado (Relatorio completo)." << endl;
+        cout << "0. Encerrar programa." << endl;
+        cout << "==============================================" << endl;
+        cout << "Escolha uma opcao: ";
+        cin >> opcao;
 
         switch(opcao){
-            case 0: break;
+            case 0: 
+                break;
 
-            case 1: {//registrar atletas.
-                cout<<"Quantos atletas quer registrar? 50, 500 ou 5.000"<<endl;
-                cin>> tamanho;
+            case 1: { // Registrar atletas iniciais
+                cout << "Quantos atletas quer registrar? 50, 500 ou 5.000: ";
+                cin >> tamanho;
 
-                if(tamanho != 50 && tamanho != 500 && tamanho != 5000){//ver se é um dos valores aceitos.
-                    cout<<"Quantidade invalida."<<endl;
+                if(tamanho != 50 && tamanho != 500 && tamanho != 5000){
+                    cout << "Quantidade invalida." << endl;
                     break;
                 }
                 if(atletas != nullptr){
-                    delete[] atletas;//caso já exista um vetor alocado.
+                    delete[] atletas;
                 }
-
                     
-                atletas = new Atleta[tamanho];//Alocar vetor dessa quantidade de atletas.
-                carregarRegistros(atletas, tamanho);//carregar o registro.
-                cout<< tamanho <<" registros foram criados!"<<endl;
+                atletas = new Atleta[tamanho];
+                carregarRegistros(atletas, tamanho);
+                cout << tamanho << " registros foram criados!" << endl;
 
-                while(!filaEspera.empty()){//esvaziar a fila antiga se ainda tiver alguma coisa.
-                    filaEspera.pop();
+                while(!filaEspera.empty()){ 
+                    filaEspera.pop(); 
                 }
+                listaAtletas.clear();
 
-                listaAtletas.clear();//esvaziar a lista caso ja exista.
-
-                for(int i=0;i<tamanho;i++){
-                    filaEspera.push(atletas[i]);//passa todos os atletas do vetor para a fila. 
-                    listaAtletas.push_back(atletas[i]);//passa todos os atletas para a lista.
+                for(int i = 0; i < tamanho; i++){
+                    filaEspera.push(atletas[i]);
+                    listaAtletas.push_back(atletas[i]);
                 }
-                
                 break;
             }
 
-            case 2:{
-                if(filaEspera.empty()){//verificar se tem alguma coisa na fila
-                    cout<<"Erro: fila vazia"<<endl;
+            case 2: { // Realizar a prova do primeiro da fila
+                if(filaEspera.empty()){
+                    cout << "Erro: fila vazia" << endl;
                     break;
                 }
 
-                Atleta atual = filaEspera.front();//pega o primeiro atleta da fila e "coloca ele pra correr"
-                filaEspera.pop();//retira esse atleta da fila.
+                Atleta atual = filaEspera.front();
+                filaEspera.pop();
 
-                double pontuacaoGerada = (rand() % 501 + 500)/10.0;//gera nota aleatória entre 50 e 100
+                double pontuacaoGerada = (rand() % 501 + 500) / 10.0; // Gera nota entre 50.0 e 100.0
 
                 if(atletas != nullptr && (atual.id - 1) < tamanho){
                     atletas[atual.id - 1].pontuacao = pontuacaoGerada;
                 }
 
-                for(auto& a : listaAtletas){//procura dentro da lista alguem com o ID igual a do atual. 
+                for(auto& a : listaAtletas){
                     if(a.id == atual.id){
-                        a.pontuacao = pontuacaoGerada;//se achar dá a pontuacao. 
+                        a.pontuacao = pontuacaoGerada; 
                         break;
                     }
                 }
-                cout<<"Prova realizada!"<<endl;
-                cout<<"Atleta que realizou: ID "<<atual.id<<" | Nome: "<<atual.nome<<" | Nota: "<<pontuacaoGerada<<endl;
 
-                //Mostrar o proximo na fila e quantos restam.
+                // Insere automaticamente o ID na ABB após realizar a prova
+                arvoreAtletas.inserir(atual.id);
+
+                cout << "Prova realizada e ID inserido na ABB!" << endl;
+                cout << "Atleta: ID " << atual.id << " | Nome: " << atual.nome << " | Nota: " << pontuacaoGerada << endl;
+
                 if(!filaEspera.empty()){
-                    cout<<"O nome do proximo atleta e: "<<filaEspera.front().nome<<endl;
+                    cout << "Proximo na fila: " << filaEspera.front().nome << endl;
                 }else{
-                    cout<<"Este foi o ultimo atleta da fila."<<endl;
+                    cout << "Este foi o ultimo atleta da fila." << endl;
                 }
-
-                cout<<"Atletas ainda esperando na fila: "<<filaEspera.size()<<endl;
-
+                cout << "Atletas ainda esperando na fila: " << filaEspera.size() << endl;
                 break;
             }
 
-            case 3:{
-                Atleta novoAtleta;//cria um novo atleta.
-                tamanho++;//o id do atleta vai ser o tamanho atual mais um.
+            case 3: { // Inserir novo atleta manualmente
+                Atleta novoAtleta;
+                tamanho++;
                 novoAtleta.id = tamanho;
-                novoAtleta.nome = "atleta " + to_string(tamanho);//nome do atleta.
+                novoAtleta.nome = "atleta " + to_string(tamanho);
                 novoAtleta.pontuacao = 0.0;
 
-                listaAtletas.push_back(novoAtleta);//o atleta é inserido no final para seguir a ordem do ID.
-                filaEspera.push(novoAtleta);//adicionar a fila de espera.
+                listaAtletas.push_back(novoAtleta);
+                filaEspera.push(novoAtleta);
 
-                cout<<novoAtleta.nome<<" inserido na lista. ID: "<<novoAtleta.id<<endl;
-                
+                cout << novoAtleta.nome << " inserido na lista e fila. ID: " << novoAtleta.id << endl;
                 break;
             }
 
-            case 4:{
+            case 4: { // Remover/Desclassificar atleta da lista
                 if(listaAtletas.empty()){
-                    cout<<"Erro: lista vazia."<<endl;
+                    cout << "Erro: lista vazia." << endl;
                     break;
                 }
 
                 int idBusca;
-                cout<<"Digite o ID do atleta a ser desclassificado."<<endl;
-                cin>>idBusca;
+                cout << "Digite o ID do atleta a ser desclassificado: ";
+                cin >> idBusca;
 
-                bool encontrado = false;//inicia encontrado com falso.
-                //serve para procurar dentro da lista se existe um atleta com o indice digitado.
-                for(auto atual = listaAtletas.begin(); atual != listaAtletas.end();atual++){
+                bool encontrado = false;
+                for(auto atual = listaAtletas.begin(); atual != listaAtletas.end(); atual++){
                     if(atual->id == idBusca){
                         listaAtletas.erase(atual);
                         encontrado = true;
-                        cout<< "atleta com ID "<<idBusca<<" desclassificado do torneio."<<endl;
+                        cout << "Atleta com ID " << idBusca << " desclassificado do torneio." << endl;
                         break;
                     }
                 }
 
-                //caso o id não seja encontrado.
                 if(!encontrado){
-                    cout<<"O id "<< idBusca<<" nao foi encontrado nos registros do torneio."<<endl;
+                    cout << "O ID " << idBusca << " nao foi encontrado nos registros." << endl;
                 }
                 break;
             }
 
-            case 5: {
-                // 1. Validação inicial: verifica se a lista está vazia antes de iniciar a navegação
+            case 5: { // Navegação com lista dupla
                 if(listaAtletas.empty()){
-                    cout<<"Erro: lista vazia."<<endl;
+                    cout << "Erro: lista vazia." << endl;
                     break;
                 }
 
-                // 2. Cria um iterador (cursor) posicionado no início da lista e uma variável para os comandos do usuário
-                auto atual = listaAtletas.begin(); // Começa pelo primeiro elemento da lista dupla
+                auto atual = listaAtletas.begin(); 
                 char comando = ' ';
 
-                // 3. Exibe o cabeçalho da navegação e os dados do primeiro atleta atual
-                cout<<"\n====Navegacao com lista dupla===="<<endl;  
-                cout<<"Atleta atual:"<<endl;
-                cout<<"ID: "<<atual->id<<" | Nome: "<<atual->nome<<" Pontuacao: "<<atual->pontuacao<<endl;
+                cout << "\n==== Navegacao com lista dupla ====" << endl;  
+                cout << "ID: " << atual->id << " | Nome: " << atual->nome << " | Pontuacao: " << atual->pontuacao << endl;
 
-                // 4. Loop de navegação interativa (permite avançar ou voltar repetidamente)
                 while(true){
-                    cout<<"Comandos(Minusculo): [d] = proximo, [e] = anterior. Use qualquer digito para sair."<<endl;
-                    cout<<"Escolha: ";
-                    cin>>comando;
+                    cout << "Comandos: [d] = proximo, [e] = anterior. Outra tecla = sair: ";
+                    cin >> comando;
 
-                    // 5. Opção para avançar para o próximo elemento da lista dupla
                     if(comando == 'd'){
-                        auto proximo = atual; // Cria uma cópia temporária do iterador atual
-                        ++proximo; // Move a cópia para a frente
-                        
-                        // Verifica se a cópia não ultrapassou o fim da lista
+                        auto proximo = atual;
+                        ++proximo;
                         if(proximo != listaAtletas.end()){
-                            atual = proximo; // Atualiza o iterador oficial para a nova posição
-                            cout<<"\nIndo para o proximo."<<endl;
+                            atual = proximo;
                             cout << "ID: " << atual->id << " | Nome: " << atual->nome << " | Pontuacao: " << atual->pontuacao << endl;
                         }else{
-                            cout<<"Voce ja esta no ultimo atleta da lista!"<<endl;
+                            cout << "Voce ja esta no ultimo atleta!" << endl;
                         }
-                    }
-                    // 6. Opção para voltar para o elemento anterior (aproveitando o encadeamento duplo)
-                    else if(comando == 'e'){
-                        // Verifica se o iterador não está no início absoluto da lista
+                    }else if(comando == 'e'){
                         if(atual != listaAtletas.begin()){
-                            --atual; // Recua o iterador diretamente para o elemento anterior
-                            cout<<"\nIndo para o anterior."<<endl;
+                            --atual;
                             cout << "ID: " << atual->id << " | Nome: " << atual->nome << " | Pontuacao: " << atual->pontuacao << endl;
                         }else{
-                            cout<<"Voce ja esta no primeiro atleta da lista.!"<<endl;
+                            cout << "Voce ja esta no primeiro atleta!" << endl;
                         }
-                    }
-                    // 7. Qualquer outra tecla encerra o loop de navegação e retorna ao menu principal
-                    else{
-                        cout<<"Saindo da navegacao."<<endl;
+                    }else{
+                        cout << "Saindo da navegacao." << endl;
                         break;
                     }
                 }
+                break;
+            }
 
+            case 6: { // Sub-menu da Árvore Binária de Busca (ABB)
+                int opArvore;
+                do {
+                    cout << "\n--- MODULO ARVORE BINARIA DE BUSCA (ABB) ---\n";
+                    cout << "1. Inserir ID na ABB\n";
+                    cout << "2. Buscar ID na ABB\n";
+                    cout << "3. Remover ID na ABB (3 Casos)\n";
+                    cout << "4. Listar IDs em Ordem (In-Order)\n";
+                    cout << "5. Mostrar Altura e Quantidade de Nos\n";
+                    cout << "0. Voltar ao Menu Principal\n";
+                    cout << "Escolha: ";
+                    cin >> opArvore;
+
+                    if(opArvore == 1){
+                        int idVal;
+                        cout << "Digite o ID para inserir na ABB: "; cin >> idVal;
+                        arvoreAtletas.inserir(idVal);
+                        cout << ">>> ID inserido na ABB!\n";
+                    }else if(opArvore == 2){
+                        int idVal;
+                        cout << "Digite o ID para buscar: "; cin >> idVal;
+                        if(arvoreAtletas.buscar(idVal)) cout << ">>> ID encontrado na ABB!\n";
+                        else cout << ">>> ID NAO encontrado.\n";
+                    }else if(opArvore == 3){
+                        int idVal;
+                        cout << "Digite o ID para remover (3 Casos): "; cin >> idVal;
+                        if(arvoreAtletas.remover(idVal)) cout << ">>> Removido com sucesso!\n";
+                        else cout << ">>> ID nao encontrado.\n";
+                    }else if(opArvore == 4){
+                        cout << "\n--- LISTAGEM EM ORDEM (ABB) ---\n";
+                        if(arvoreAtletas.estaVazia()) cout << "ABB vazia.\n";
+                        else arvoreAtletas.imprimirEmOrdem();
+                        cout << "\n";
+                    }else if(opArvore == 5){
+                        cout << "Quantidade de Nos: " << arvoreAtletas.getTamanho() << "\n";
+                        cout << "Altura da ABB: " << arvoreAtletas.getAltura() << "\n";
+                    }
+                } while(opArvore != 0);
+                break;
+            }
+
+            case 7: { // Ordenação por Pontuação
+                if(tamanho == 0 || atletas == nullptr){
+                    cout << "Erro: Nenhum registro criado. Use a opcao 1 primeiro." << endl;
+                    break;
+                }
+                
+                Atleta* copiaOrdenacao = new Atleta[tamanho];
+                copiarVetorAtletas(atletas, copiaOrdenacao, tamanho);
+
+                long long comp = 0, trocas = 0;
+                cout << "\nEscolha o metodo de ordenacao:\n";
+                cout << "1. QuickSort\n2. Selection Sort\n3. Insertion Sort\nOpcao: ";
+                int opOrd; cin >> opOrd;
+
+                if(opOrd == 1) quickSort(copiaOrdenacao, 0, tamanho - 1, comp, trocas);
+                else if(opOrd == 2) selectionSort(copiaOrdenacao, tamanho, comp, trocas, false);
+                else if(opOrd == 3) insertionSort(copiaOrdenacao, tamanho, comp, trocas, false);
+                else { cout << "Opcao invalida!\n"; delete[] copiaOrdenacao; break; }
+
+                cout << "\nOrdenacao concluida!\n";
+                cout << "Comparacoes: " << comp << " | Trocas/Deslocamentos: " << trocas << endl;
+                
+                cout << "Deseja imprimir os primeiros 10 atletas ordenados? (1-Sim / 0-Nao): ";
+                int imp; cin >> imp;
+                if(imp == 1) imprimeVetorAtletas_Pont(copiaOrdenacao, (tamanho < 10 ? tamanho : 10));
+
+                delete[] copiaOrdenacao;
+                break;
+            }
+
+            case 8: { // Modo de Teste Automatizado
+                executarModoTeste();
                 break;
             }
 
             default: {
-                cout<<"opcao invalida. Tente novamente."<<endl;
+                cout << "Opcao invalida. Tente novamente." << endl;
                 break;
             }
-
         }
-    }while(opcao!=0);//encerrando o programa. 
-    cout<<"\nSaindo..."<<endl;
+    } while(opcao != 0);
 
-    if(atletas != nullptr){//liberar o vetor de atletas caso exista alguma coisa
+    cout << "\nSaindo..." << endl;
+    if(atletas != nullptr){
         delete[] atletas;
     }
     return 0;
