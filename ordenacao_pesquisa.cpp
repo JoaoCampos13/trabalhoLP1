@@ -6,21 +6,21 @@
 
 using namespace std;
 
-// Realiza a troca física de dois atletas no vetor
+// Realiza a troca física de posições entre dois atletas passados por referência
 void troca(Atleta& a, Atleta& b) {
     Atleta auxiliar = a;  
     a = b;
     b = auxiliar;
 }
 
-// Copia os dados de um vetor de atletas para outro vetor destino
-void copiarVetorAtletas(const Atleta origem[], Atleta destino[], int n){
-    for(int i = 0; i < n; i++){
+// Copia todos os elementos de um vetor de atletas de origem para um vetor de destino
+void copiarVetorAtletas(const Atleta origem[], Atleta destino[], int n) {
+    for (int i = 0; i < n; i++) {
        destino[i] = origem[i];
     }
 }
 
-// Imprime os dados essenciais dos atletas no console
+// Imprime no console os dados básicos dos atletas (ID, Nome e Pontuação) formatados
 void imprimeVetorAtletas_Pont(Atleta v[], int n) {
     cout << "[ ";
     for (int i = 0; i < n; i++) {
@@ -29,11 +29,12 @@ void imprimeVetorAtletas_Pont(Atleta v[], int n) {
     cout << "]" << endl;
 }
 
-// Ordena o vetor em ordem decrescente utilizando o algoritmo Selection Sort
+// Ordena o vetor em ordem decrescente utilizando o método Selection Sort
 void selectionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar) {
     for (int i = 0; i < n - 1; i++) {
         int indice_maior_pontuacao = i;            
 
+        // Procura o elemento com a maior pontuação no restante do vetor
         for (int j = i + 1; j < n; j++) {
             comparacoes++;
             if (v[j].pontuacao > v[indice_maior_pontuacao].pontuacao) {  
@@ -41,6 +42,7 @@ void selectionSort(Atleta v[], int n, long long& comparacoes, long long& trocas,
             }
         }
 
+        // Troca apenas se necessário
         if (indice_maior_pontuacao != i) {
             troca(v[i], v[indice_maior_pontuacao]);
             trocas++;
@@ -53,24 +55,24 @@ void selectionSort(Atleta v[], int n, long long& comparacoes, long long& trocas,
     }
 }
 
-// Procura um elemento de forma sequencial (linear) num vetor desordenado
-int buscaSequencial(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos){
-    for(int i = 0; i < n; i++){
-        acessos++; // Conta cada verificação de memória feita
+// Executa busca sequencial (linear) em um vetor desordenado, contando os acessos à memória
+int buscaSequencial(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos) {
+    for (int i = 0; i < n; i++) {
+        acessos++; // Incrementa a cada verificação/acesso ao vetor
        
-        if(v[i].pontuacao == pontuacaoAtleta){
-            return i; // Retorna o índice onde encontrou
+        if (v[i].pontuacao == pontuacaoAtleta) {
+            return i; // Retorna o índice onde achou
         }
     }
-    return -1; // Não encontrado
+    return -1; // Retorna -1 se não encontrar
 }
 
-// Procura um elemento de forma binária em um vetor ordenado
-int buscaBinaria(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos){
+// Executa busca binária em um vetor previamente ordenado, contando os acessos à memória
+int buscaBinaria(const Atleta v[], int n, int pontuacaoAtleta, long long& acessos) {
     int inicio = 0, fim = n - 1;
     while (inicio <= fim) {
         int meio = (inicio + fim) / 2;
-        acessos++; // Conta o acesso ao elemento do meio
+        acessos++; // Incrementa ao acessar o elemento do meio
         
         if (v[meio].pontuacao == pontuacaoAtleta) {
             return meio;  
@@ -84,9 +86,9 @@ int buscaBinaria(const Atleta v[], int n, int pontuacaoAtleta, long long& acesso
     return -1;  
 }
 
-// Função de partição auxiliar para o QuickSort (organiza em ordem decrescente)
+// Função de partição utilizada pelo algoritmo QuickSort (organiza em ordem decrescente)
 int particiona(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas) {
-    int pivo_pontuacao = v[fim].pontuacao;        
+    int pivo_pontuacao = v[fim].pontuacao; // Define o último elemento como pivô        
     int i = inicio - 1;       
 
     for (int j = inicio; j < fim; j++) {
@@ -102,8 +104,8 @@ int particiona(Atleta v[], int inicio, int fim, long long& comparacoes, long lon
     return i + 1;             
 }
 
-// Algoritmo de ordenação rápida QuickSort
-void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas){
+// Algoritmo de ordenação rápida QuickSort estruturado recursivamente
+void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long long& trocas) {
     if (inicio < fim) {  
         int pos_pivo = particiona(v, inicio, fim, comparacoes, trocas);
         quickSort(v, inicio, pos_pivo - 1, comparacoes, trocas);  
@@ -111,12 +113,13 @@ void quickSort(Atleta v[], int inicio, int fim, long long& comparacoes, long lon
     }
 }
 
-// Ordena o vetor em ordem decrescente utilizando o Insertion Sort
+// Ordena o vetor em ordem decrescente utilizando o método Insertion Sort
 void insertionSort(Atleta v[], int n, long long& comparacoes, long long& trocas, bool mostrar) {
     for (int i = 1; i < n; i++) {
         Atleta chave = v[i];  
         int j = i - 1;   
         
+        // Desloca os elementos menores para abrir espaço para a chave
         while (j >= 0) {
             comparacoes++;
             if (v[j].pontuacao < chave.pontuacao) { 
@@ -136,38 +139,39 @@ void insertionSort(Atleta v[], int n, long long& comparacoes, long long& trocas,
     }
 }
 
-// Executa testes automatizados exigidos para o relatório (com tamanhos 50, 500 e 5000)
+// Executa testes automatizados com vetores de 50, 500 e 5000 registros para gerar o relatório estatístico
 void executarModoTeste() {
     int tamanhos[] = {50, 500, 5000};
 
-    for(int t = 0; t < 3; t++){
+    for (int t = 0; t < 3; t++) {
         int n = tamanhos[t];
 
         Atleta* original = new Atleta[n];
         Atleta* copia = new Atleta[n];
 
-        for(int i = 0; i < n; i++){
+        // Preenche o vetor com dados aleatórios simulados
+        for (int i = 0; i < n; i++) {
             original[i].id = i + 1;
             original[i].nome = "Atleta_" + to_string(i + 1);
             original[i].pontuacao = rand() % 10000; 
         }
 
-        // Teste QuickSort
+        // Testa o QuickSort
         long long compQ = 0, trocasQ = 0;
         copiarVetorAtletas(original, copia, n);
         quickSort(copia, 0 , n - 1, compQ, trocasQ);
 
-        // Teste Selection Sort
+        // Testa o Selection Sort
         long long compS = 0, trocasS = 0;
         copiarVetorAtletas(original, copia, n);
         selectionSort(copia, n, compS, trocasS, false); 
 
-        // Teste Insertion Sort
+        // Testa o Insertion Sort
         long long compI = 0, trocasI = 0;
         copiarVetorAtletas(original, copia, n);
         insertionSort(copia, n, compI, trocasI, false);
 
-        // Exibição dos resultados estatísticos
+        // Exibe o relatório de comparações e trocas
         cout << "\n--- Relatorio para N = " << n << " ---" << endl;
         cout << left << setw(18) << "Algoritmo" << setw(22) << "Comparacoes" << setw(22) << "Trocas/Deslocamentos" << endl;
         cout << left << setw(18) << "Quicksort" << setw(22) << compQ << setw(22) << trocasQ << endl;
@@ -187,6 +191,7 @@ void executarModoTeste() {
         cout << left << setw(25) << "Busca Sequencial" << setw(22) << acessosSeq << endl;
         cout << left << setw(25) << "Busca Binaria" << setw(22) << acessosBin << endl;
 
+        // Libera a memória alocada dinamicamente nesta iteração
         delete [] original;
         delete[] copia;
     }
